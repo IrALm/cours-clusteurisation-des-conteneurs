@@ -1,0 +1,27 @@
+# Etat du cluster APRES la panne de worker1 - 2026-10-05 12:05:29
+# Panne simulee a 12:04:49 avec : docker stop worker1
+
+$ docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+pj07363c4mno1ciweisizv933 *   manager    Ready     Active         Leader           29.8.2
+h0m8dk1epnyx0x039tdoxkf9b     worker1    Down      Active                          29.8.2
+qs7nm0to33s1istwrsne0x21e     worker2    Ready     Active                          29.8.2
+
+$ docker service ls
+ID             NAME      MODE         REPLICAS   IMAGE          PORTS
+k70iweco6ldf   web       replicated   6/4        nginx:latest   
+
+$ docker service ps web --filter desired-state=running
+ID             NAME      IMAGE          NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
+xpsbb05ngj6j   web.1     nginx:latest   worker2   Running         Running 23 seconds ago                 
+uae30boc5j29   web.2     nginx:latest   manager   Running         Running 23 seconds ago                 
+n1howl81rzsk   web.3     nginx:latest   worker2   Running         Running 59 seconds ago                 
+21c56l1f7ju8   web.4     nginx:latest   manager   Running         Running about a minute ago             
+
+$ docker node ps (taches par noeud)
+--- manager
+web.2  Running 23 seconds ago
+web.4  Running about a minute ago
+--- worker2
+web.1  Running 23 seconds ago
+web.3  Running 59 seconds ago

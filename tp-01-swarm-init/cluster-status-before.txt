@@ -1,0 +1,27 @@
+# Etat du cluster AVANT la panne - 2026-10-05 12:04:40
+
+$ docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+pj07363c4mno1ciweisizv933 *   manager    Ready     Active         Leader           29.8.2
+h0m8dk1epnyx0x039tdoxkf9b     worker1    Ready     Active                          29.8.2
+qs7nm0to33s1istwrsne0x21e     worker2    Ready     Active                          29.8.2
+
+$ docker service ls
+ID             NAME      MODE         REPLICAS   IMAGE          PORTS
+k70iweco6ldf   web       replicated   4/4        nginx:latest   
+
+$ docker service ps web
+ID             NAME      IMAGE          NODE      DESIRED STATE   CURRENT STATE            ERROR     PORTS
+bzy98vi9nsup   web.1     nginx:latest   worker1   Running         Running 10 seconds ago             
+668phlrw9rko   web.2     nginx:latest   worker1   Running         Running 11 seconds ago             
+n1howl81rzsk   web.3     nginx:latest   worker2   Running         Running 9 seconds ago              
+21c56l1f7ju8   web.4     nginx:latest   manager   Running         Running 11 seconds ago             
+
+$ docker node ps (taches par noeud)
+--- manager
+web.4  Running 11 seconds ago
+--- worker1
+web.1  Running 10 seconds ago
+web.2  Running 11 seconds ago
+--- worker2
+web.3  Running 10 seconds ago

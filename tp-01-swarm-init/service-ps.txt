@@ -1,0 +1,27 @@
+# Historique complet des taches du service web (apres la panne de worker1)
+
+$ docker service ps web
+ID             NAME        IMAGE          NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
+xpsbb05ngj6j   web.1       nginx:latest   worker2   Running         Running 24 seconds ago                 
+bzy98vi9nsup    \_ web.1   nginx:latest   worker1   Shutdown        Running about a minute ago             
+uae30boc5j29   web.2       nginx:latest   manager   Running         Running 24 seconds ago                 
+668phlrw9rko    \_ web.2   nginx:latest   worker1   Shutdown        Running about a minute ago             
+n1howl81rzsk   web.3       nginx:latest   worker2   Running         Running 59 seconds ago                 
+21c56l1f7ju8   web.4       nginx:latest   manager   Running         Running about a minute ago             
+
+$ docker service ps web --no-trunc --format 'table {{.Name}}\t{{.Node}}\t{{.DesiredState}}\t{{.CurrentState}}'
+NAME        NODE      DESIRED STATE   CURRENT STATE
+web.1       worker2   Running         Running 24 seconds ago
+ \_ web.1   worker1   Shutdown        Running about a minute ago
+web.2       manager   Running         Running 24 seconds ago
+ \_ web.2   worker1   Shutdown        Running about a minute ago
+web.3       worker2   Running         Running about a minute ago
+web.4       manager   Running         Running about a minute ago
+
+# Horodatages (UTC) issus de docker inspect <tache>
+web.1  noeud=qs7nm0to33s1istwrsne0x21e  creee=2026-10-05 10:05:01.486588263 +0000 UTC  running_depuis=2026-10-05 10:05:06.815598312 +0000 UTC  desired=running
+web.1  noeud=h0m8dk1epnyx0x039tdoxkf9b  creee=2026-10-05 10:04:17.467641078 +0000 UTC  running_depuis=2026-10-05 10:04:30.732151599 +0000 UTC  desired=shutdown
+web.2  noeud=pj07363c4mno1ciweisizv933  creee=2026-10-05 10:05:01.486535023 +0000 UTC  running_depuis=2026-10-05 10:05:06.827434499 +0000 UTC  desired=running
+web.2  noeud=h0m8dk1epnyx0x039tdoxkf9b  creee=2026-10-05 10:04:17.467678074 +0000 UTC  running_depuis=2026-10-05 10:04:29.736767794 +0000 UTC  desired=shutdown
+web.3  noeud=qs7nm0to33s1istwrsne0x21e  creee=2026-10-05 10:04:17.467693307 +0000 UTC  running_depuis=2026-10-05 10:04:30.96157164 +0000 UTC  desired=running
+web.4  noeud=pj07363c4mno1ciweisizv933  creee=2026-10-05 10:04:17.467706186 +0000 UTC  running_depuis=2026-10-05 10:04:29.840953339 +0000 UTC  desired=running
