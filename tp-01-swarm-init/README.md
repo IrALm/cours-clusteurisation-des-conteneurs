@@ -120,7 +120,7 @@ Le service est passé à `4/4` en une quinzaine de secondes, le temps que chaque
 Extrait de [cluster-status-before.txt](cluster-status-before.txt) :
 
 ```text
-$ docker service ps web
+$ docker exec manager docker service ps web
 ID             NAME      IMAGE          NODE      DESIRED STATE   CURRENT STATE            ERROR     PORTS
 bzy98vi9nsup   web.1     nginx:latest   worker1   Running         Running 10 seconds ago
 668phlrw9rko   web.2     nginx:latest   worker1   Running         Running 11 seconds ago
@@ -157,13 +157,13 @@ Comme le nœud est un conteneur, `docker stop` revient à éteindre la machine :
 Extrait de [cluster-status-after.txt](cluster-status-after.txt) :
 
 ```text
-$ docker node ls
+$ docker exec manager docker node ls
 ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
 pj07363c4mno1ciweisizv933 *   manager    Ready     Active         Leader           29.8.2
 h0m8dk1epnyx0x039tdoxkf9b     worker1    Down      Active                          29.8.2
 qs7nm0to33s1istwrsne0x21e     worker2    Ready     Active                          29.8.2
 
-$ docker service ps web --filter desired-state=running
+$  docker exec manager docker service ps web --filter desired-state=running
 ID             NAME      IMAGE          NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
 xpsbb05ngj6j   web.1     nginx:latest   worker2   Running         Running 23 seconds ago
 uae30boc5j29   web.2     nginx:latest   manager   Running         Running 23 seconds ago
@@ -174,7 +174,7 @@ n1howl81rzsk   web.3     nginx:latest   worker2   Running         Running 59 sec
 Historique complet ([service-ps.txt](service-ps.txt)) :
 
 ```text
-$ docker service ps web
+$ docker exec manager docker service ps web
 ID             NAME        IMAGE          NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
 xpsbb05ngj6j   web.1       nginx:latest   worker2   Running         Running 24 seconds ago
 bzy98vi9nsup    \_ web.1   nginx:latest   worker1   Shutdown        Running about a minute ago
