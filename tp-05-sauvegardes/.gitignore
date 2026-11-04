@@ -1,0 +1,7 @@
+# sauvegardes copiées hors du cluster : ce sont des données, pas du code
+*.dump
+*.dump.tmp
+backups/
+# ne jamais committer le mot de passe de la base
+db_password*
+*.secret

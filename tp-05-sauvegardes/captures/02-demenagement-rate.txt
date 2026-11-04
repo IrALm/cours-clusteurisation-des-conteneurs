@@ -1,0 +1,33 @@
+### 15:56:41 total avant
+{"version":"1.0","total":10,"results":[{"option":"kubernetes","count":3},{"option":"nomad","count":3},{"option":"swarm","count":4}]}
+### 15:56:42 déplacement de l'étiquette db : manager1 -> worker2
+manager1
+worker2
+### 15:57:07 docker service ps quickpoll_db
+ID             NAME                 IMAGE                NODE       DESIRED STATE   CURRENT STATE             ERROR                              PORTS
+ekjo5vcda9ia   quickpoll_db.1       postgres:17-alpine   worker2    Running         Running 9 seconds ago                                        
+k95g37wxo3ej    \_ quickpoll_db.1   postgres:17-alpine   manager1   Shutdown        Rejected 25 seconds ago   "assigned node no longer meets…"   
+### 15:57:08 total après
+{"version":"1.0","total":0,"results":[],"schema":"missing"}
+### [manager1] volumes
+quickpoll_db-data
+### [worker1] volumes
+### [worker2] volumes
+quickpoll_db-data
+### 15:57:09 on vote 2 fois sur la base vide de worker2
+15:57:09 votes envoyés=2 acceptés=0
+{"version":"1.0","total":0,"results":[],"schema":"missing"}
+
+### 15:57:09 retour de l'étiquette : worker2 -> manager1
+worker2
+manager1
+### 15:57:35 docker service ps quickpoll_db
+quickpoll_db.1 manager1 Running Running 15 seconds ago
+quickpoll_db.1 worker2 Shutdown Rejected 25 seconds ago
+quickpoll_db.1 manager1 Shutdown Rejected 53 seconds ago
+### 15:57:35 total après retour
+{"version":"1.0","total":10,"results":[{"option":"kubernetes","count":3},{"option":"nomad","count":3},{"option":"swarm","count":4}]}
+### [manager1] volumes
+quickpoll_db-data
+### [worker2] volumes
+quickpoll_db-data

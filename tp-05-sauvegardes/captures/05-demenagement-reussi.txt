@@ -1,0 +1,30 @@
+### 15:01:27 total avant
+{"version":"1.0","total":18,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":7}]}
+### docker service ps quickpoll_db (avant)
+quickpoll_db.1 manager1 Running 4 minutes ago
+15:01:27 | début du déménagement manager1 -> worker2
+15:01:27 | 1. gel des écritures (api -> 0)
+15:01:33 | 2. sauvegarde à la demande (move-20261104-150127.dump)
+manager1 Complete 1 second ago 
+saved /backups/move-20261104-150127.dump
+15:01:36 | 3. bascule des étiquettes
+15:01:36 | 4. attente d'une base saine sur worker2
+15:01:47 |    base Running sur worker2
+15:01:47 | 5. restauration de move-20261104-150127.dump
+manager1 Complete 1 second ago 
+restoring /backups/move-20261104-150127.dump
+restore OK
+15:01:51 | 6. dégel (api -> 3)
+15:01:51 | fin du déménagement
+real	0m 23.16s
+user	0m 0.50s
+sys	0m 0.81s
+### 15:01:59 total après
+{"version":"1.0","total":18,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":7}]}
+### docker service ps quickpoll_db (après)
+quickpoll_db.1 worker2 Running 12 seconds ago
+ID             NAME               MODE         REPLICAS               IMAGE                                PORTS
+mnanf5fuuaxb   quickpoll_api      replicated   3/3 (max 2 per node)   127.0.0.1:5000/quickpoll-api:1.0     
+8gxdt2bpw5u1   quickpoll_backup   replicated   1/1                    postgres:17-alpine                   
+jtmoizcauf8d   quickpoll_db       replicated   1/1                    postgres:17-alpine                   
+u7ueq4t8q0dl   quickpoll_front    replicated   2/2                    127.0.0.1:5000/quickpoll-front:1.0   *:8080->80/tcp

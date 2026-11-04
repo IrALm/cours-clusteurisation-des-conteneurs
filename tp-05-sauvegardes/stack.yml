@@ -1,0 +1,118 @@
+# QuickPoll — TP5 : données, sauvegardes et perte du nœud de la base
+#
+# Prérequis (une seule fois, sur le manager) :
+#   docker node update --label-add db=true <nœud de la base>
+#   docker node update --label-add backup=true <un AUTRE nœud>
+#   head -c 24 /dev/urandom | base64 | tr -d '\n' | docker secret create db_password -
+# Déploiement :
+#   docker stack deploy -c stack.yml quickpoll
+
+x-api-env: &api-env
+  DB_HOST: db
+  DB_USER: quickpoll
+  DB_NAME: quickpoll
+  DB_PASSWORD_FILE: /run/secrets/db_password
+
+services:
+  front:
+    image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-front:1.0
+    ports:
+      - "8080:80"
+    networks:
+      - front
+    deploy:
+      replicas: 2
+      update_config:
+        order: start-first
+
+  api:
+    image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-api:1.0
+    environment: *api-env
+    secrets:
+      - db_password
+    networks:
+      - front
+      - back
+    healthcheck:
+      # vivacité seulement : une base absente ne doit pas faire tuer l'API en boucle
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: quickpoll
+      POSTGRES_DB: quickpoll
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - db-data:/var/lib/postgresql/data   # volume LOCAL au nœud qui fait tourner la tâche
+    networks:
+      - back
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quickpoll -d quickpoll"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.db == true
+      restart_policy:
+        condition: any
+
+  backup:
+    image: postgres:17-alpine          # contient pg_dump / pg_restore
+    entrypoint: ["/bin/sh", "/backup.sh"]
+    environment:
+      INTERVAL: "60"
+      KEEP: "10"
+    configs:
+      - source: backup_script
+        target: /backup.sh
+    secrets:
+      - db_password
+    volumes:
+      - backups:/backups
+    networks:
+      - back
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.backup == true  # jamais sur le nœud de la base
+      restart_policy:
+        condition: any
+
+networks:
+  front:
+    driver: overlay
+  back:
+    driver: overlay
+    attachable: true                  # pour pouvoir y brancher un conteneur de debug
+
+volumes:
+  db-data:
+  backups:
+
+configs:
+  backup_script:
+    file: ./backup.sh
+
+secrets:
+  db_password:
+    external: true                    # créé hors du dépôt avec "docker secret create"

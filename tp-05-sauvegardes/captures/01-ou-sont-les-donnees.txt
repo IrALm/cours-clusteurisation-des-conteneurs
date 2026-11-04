@@ -1,0 +1,48 @@
+### 15:56:31 docker service ps quickpoll_db
+quickpoll_db.1 manager1 Running 42 seconds ago
+
+### [manager1] docker volume ls --filter name=quickpoll
+DRIVER    VOLUME NAME
+local     quickpoll_db-data
+
+### [worker1] docker volume ls --filter name=quickpoll
+DRIVER    VOLUME NAME
+
+### [worker2] docker volume ls --filter name=quickpoll
+DRIVER    VOLUME NAME
+
+### [manager1] docker volume inspect quickpoll_db-data --format '{{.Mountpoint}}'
+/var/lib/docker/volumes/quickpoll_db-data/_data
+
+### [manager1] ls /var/lib/docker/volumes/quickpoll_db-data/_data
+PG_VERSION
+base
+global
+pg_commit_ts
+pg_dynshmem
+pg_hba.conf
+pg_ident.conf
+pg_logical
+pg_multixact
+pg_notify
+pg_replslot
+pg_serial
+pg_snapshots
+pg_stat
+pg_stat_tmp
+pg_subtrans
+pg_tblspc
+pg_twophase
+pg_wal
+pg_xact
+postgresql.auto.conf
+postgresql.conf
+postmaster.opts
+postmaster.pid
+
+### [manager1] du -sh /var/lib/docker/volumes/quickpoll_db-data/_data
+45.8M	/var/lib/docker/volumes/quickpoll_db-data/_data
+
+### [worker1] docker volume inspect quickpoll_db-data
+[]
+Error response from daemon: get quickpoll_db-data: no such volume

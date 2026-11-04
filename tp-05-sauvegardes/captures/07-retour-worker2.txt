@@ -1,0 +1,45 @@
+### 15:05:32 docker start tp5-worker2
+tp5-worker2
+### docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+70fg4aqslofixm5vfq33w7cdb *   manager1   Ready     Active         Leader           29.8.2
+8d1tfp7p0w2qz66jdqbohhqei     worker1    Ready     Active                          29.8.2
+kpzrsf2pp174e9122idac19my     worker2    Ready     Active                          29.8.2
+### étiquettes
+manager1 map[backup:true]
+worker1 map[db:true]
+worker2 map[]
+### [worker2] conteneurs
+quickpoll_api.1.jxbg7h3f5zy31nmevj0vi6cet Exited (0) 2 minutes ago
+quickpoll_db.1.4saj0g61xty49fbi3s8eczest Exited (0) 2 minutes ago
+quickpoll_db.1.ekjo5vcda9iaqouax04cceyku Exited (0) 8 minutes ago
+quickpoll_front.2.9jeex0ag77ozjfjpwnoahlr7d Exited (255) 25 seconds ago
+### [worker2] volumes
+DRIVER    VOLUME NAME
+local     quickpoll_db-data
+### [worker2] contenu de l'ancien volume (la table votes est encore là, 107 votes)
+46.1M	/var/lib/docker/volumes/quickpoll_db-data/_data
+### docker service ps quickpoll_db --filter desired-state=running
+ID             NAME             IMAGE                NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
+mpkdlmbtyrbb   quickpoll_db.1   postgres:17-alpine   worker1   Running         Running about a minute ago             
+### 15:06:00 total
+{"version":"1.0","total":107,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":96}]}
+### [worker2] lecture de l'ancien volume avec un postgres temporaire (hors Swarm)
+Unable to find image 'postgres:17-alpine' locally
+17-alpine: Pulling from library/postgres
+Digest: sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
+Status: Downloaded newer image for postgres:17-alpine
+ votes | max_id |         dernier_vote          
+-------+--------+-------------------------------
+   107 |    107 | 2026-11-04 15:03:19.755883+00
+(1 row)
+
+### nettoyage : suppression de l'ancien volume sur worker2 (et de celui, périmé, sur manager1)
+quickpoll_db-data
+Error response from daemon: remove quickpoll_db-data: volume is in use - [4f2e7a21206083d62366677bbbf3eda290f038c4fcdba0f926036c2ce584493d, 1ed383439c58ee3251058b83acd2a4b224255ccf6254a033bbd947d6d57e86e9]
+### [manager1] volumes
+quickpoll_backups
+quickpoll_db-data
+### [worker1] volumes
+quickpoll_db-data
+### [worker2] volumes

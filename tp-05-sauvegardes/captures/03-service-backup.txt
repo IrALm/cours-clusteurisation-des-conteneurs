@@ -1,0 +1,42 @@
+### 15:57:43 docker node update --label-add backup=true manager1
+manager1
+Updating service quickpoll_front (id: u7ueq4t8q0dlu2dlww4uuj42p)
+Updating service quickpoll_api (id: mnanf5fuuaxb64pujk9r1l3db)
+Updating service quickpoll_db (id: jtmoizcauf8dwi2vj2cxeep0u)
+Updating service quickpoll_backup (id: 8gxdt2bpw5u1myyh9a98siys0)
+### 16:00:06 docker service ls
+ID             NAME               MODE         REPLICAS               IMAGE                                PORTS
+mnanf5fuuaxb   quickpoll_api      replicated   3/3 (max 2 per node)   127.0.0.1:5000/quickpoll-api:1.0     
+8gxdt2bpw5u1   quickpoll_backup   replicated   1/1                    postgres:17-alpine                   
+jtmoizcauf8d   quickpoll_db       replicated   1/1                    postgres:17-alpine                   
+u7ueq4t8q0dl   quickpoll_front    replicated   2/2                    127.0.0.1:5000/quickpoll-front:1.0   *:8080->80/tcp
+### docker service logs quickpoll_backup
+14:57:44 saved /backups/quickpoll-20261104-145744.dump (4.0K)
+14:58:44 saved /backups/quickpoll-20261104-145844.dump (4.0K)
+14:59:44 saved /backups/quickpoll-20261104-145944.dump (4.0K)
+### ls -l /backups
+total 12
+-rw-r--r--    1 root     root          2848 Nov  4 14:57 quickpoll-20261104-145744.dump
+-rw-r--r--    1 root     root          2848 Nov  4 14:58 quickpoll-20261104-145844.dump
+-rw-r--r--    1 root     root          2848 Nov  4 14:59 quickpoll-20261104-145944.dump
+### pg_restore --list (dernière) | head
+;
+; Archive created at 2026-11-04 14:59:44 UTC
+;     dbname: quickpoll
+;     TOC Entries: 11
+;     Compression: gzip
+;     Dump Version: 1.16-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 17.11
+;     Dumped by pg_dump version: 17.11
+;
+;
+; Selected TOC Entries:
+;
+218; 1259 16386 TABLE public votes quickpoll
+217; 1259 16385 SEQUENCE public votes_id_seq quickpoll
+3465; 0 0 SEQUENCE OWNED BY public votes_id_seq quickpoll
+3308; 2604 16389 DEFAULT public votes id quickpoll
+3458; 0 16386 TABLE DATA public votes quickpoll

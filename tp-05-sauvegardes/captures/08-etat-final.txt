@@ -1,0 +1,42 @@
+### [manager1] anciennes tâches db arrêtées qui retiennent le volume
+quickpoll_db.1.czx0hy6lq3rslg8yhomwgb1py Exited (0) 5 minutes ago
+quickpoll_db.1.k95g37wxo3ej3obc63gsi1wgt Exited (0) 9 minutes ago
+quickpoll_db-data
+
+### ÉTAT FINAL
+ID             NAME               MODE         REPLICAS               IMAGE                                PORTS
+mnanf5fuuaxb   quickpoll_api      replicated   3/3 (max 2 per node)   127.0.0.1:5000/quickpoll-api:1.0     
+8gxdt2bpw5u1   quickpoll_backup   replicated   1/1                    postgres:17-alpine                   
+jtmoizcauf8d   quickpoll_db       replicated   1/1                    postgres:17-alpine                   
+u7ueq4t8q0dl   quickpoll_front    replicated   2/2                    127.0.0.1:5000/quickpoll-front:1.0   *:8080->80/tcp
+manager1 map[backup:true]
+worker1 map[db:true]
+worker2 map[]
+### placement db / backup
+quickpoll_backup.1 manager1 Running 9 minutes ago
+quickpoll_db.1 worker1 Running 2 minutes ago
+### [manager1] volumes
+quickpoll_backups
+### [worker1] volumes
+quickpoll_db-data
+### [worker2] volumes
+### logs backup (fin)
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+15:03:43 backup FAILED
+15:04:43 backup FAILED
+15:05:43 saved /backups/quickpoll-20261104-150543.dump (4.0K)
+15:06:43 saved /backups/quickpoll-20261104-150643.dump (4.0K)
+### nombre de fichiers dans /backups
+7
+quickpoll-20261104-150643.dump
+quickpoll-20261104-150543.dump
+quickpoll-20261104-150244.dump
+move-20261104-150127.dump
+quickpoll-20261104-150044.dump
+quickpoll-20261104-145944.dump
+quickpoll-20261104-145844.dump
+quickpoll-20261104-145744.dump
+### total
+{"version":"1.0","total":107,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":96}]}

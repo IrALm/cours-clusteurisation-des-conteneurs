@@ -1,0 +1,23 @@
+### 15:00:16 UTC : 5 votes (lot A)
+16:00:16 votes envoyés=5 acceptés=5
+{"version":"1.0","total":15,"results":[{"option":"kubernetes","count":5},{"option":"nomad","count":4},{"option":"swarm","count":6}]}
+### nouvelle sauvegarde :
+15:00:44 saved /backups/quickpoll-20261104-150044.dump (4.0K)
+### 15:00:45 UTC : 5 votes (lot B)
+16:00:46 votes envoyés=5 acceptés=5
+{"version":"1.0","total":20,"results":[{"option":"kubernetes","count":7},{"option":"nomad","count":5},{"option":"swarm","count":8}]}
+### 15:00:46 UTC : restauration (commande du sujet)
+active tasks: 1 out of 1 tasks
+active tasks: 0 out of 0 tasks
+job complete
+### docker service ls --filter name=restore
+ID             NAME      MODE             REPLICAS              IMAGE                PORTS
+95s05dy8xkwm   restore   replicated job   0/1 (1/1 completed)   postgres:17-alpine   
+### docker service ps restore
+ID             NAME                                IMAGE                NODE       DESIRED STATE   CURRENT STATE                     ERROR     PORTS
+q1b3sjsee08o   restore.70fg4aqslofixm5vfq33w7cdb   postgres:17-alpine   manager1   Complete        Complete less than a second ago             
+### docker service logs restore
+restore.0.q1b3sjsee08o@manager1    | restoring /backups/quickpoll-20261104-150044.dump
+restore
+### 15:00:49 UTC : total après restauration
+{"version":"1.0","total":15,"results":[{"option":"kubernetes","count":5},{"option":"nomad","count":4},{"option":"swarm","count":6}]}

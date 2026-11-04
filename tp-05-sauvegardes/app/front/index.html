@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuickPoll</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 3rem auto; padding: 0 1rem; }
+    button { padding: .6rem 1rem; margin: .25rem; font-size: 1rem; cursor: pointer; }
+    pre { background: #f3f3f3; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>QuickPoll</h1>
+  <p>Quel orchestrateur pour votre prochain projet ?</p>
+  <div>
+    <button onclick="vote('swarm')">Swarm</button>
+    <button onclick="vote('kubernetes')">Kubernetes</button>
+    <button onclick="vote('nomad')">Nomad</button>
+  </div>
+  <h2>Résultats</h2>
+  <pre id="results">…</pre>
+  <script>
+    async function vote(option) {
+      await fetch('/api/vote', { method: 'POST', body: JSON.stringify({ option }) });
+      setTimeout(refresh, 300);
+    }
+    async function refresh() {
+      const r = await fetch('/api/poll');
+      document.getElementById('results').textContent = JSON.stringify(await r.json(), null, 2);
+    }
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>

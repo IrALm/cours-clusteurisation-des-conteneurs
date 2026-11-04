@@ -1,0 +1,49 @@
+### dernière sauvegarde avant la panne
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+15:02:44 saved /backups/quickpoll-20261104-150244.dump (4.0K)
+### 15:03:19 total juste avant la panne
+{"version":"1.0","total":107,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":96}]}
+### 15:03:19 PANNE : docker stop tp5-worker2
+tp5-worker2
+### 15:03:21 panne effective
+
+### 15:04:18 (≈1 min après) docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+70fg4aqslofixm5vfq33w7cdb *   manager1   Ready     Active         Leader           29.8.2
+8d1tfp7p0w2qz66jdqbohhqei     worker1    Ready     Active                          29.8.2
+kpzrsf2pp174e9122idac19my     worker2    Down      Active                          29.8.2
+### docker service ps quickpoll_db
+ID             NAME                 IMAGE                NODE       DESIRED STATE   CURRENT STATE            ERROR                              PORTS
+mpkdlmbtyrbb   quickpoll_db.1       postgres:17-alpine              Running         Pending 47 seconds ago   "no suitable node (scheduling …"   
+4saj0g61xty4    \_ quickpoll_db.1   postgres:17-alpine   worker2    Shutdown        Running 2 minutes ago                                       
+czx0hy6lq3rs    \_ quickpoll_db.1   postgres:17-alpine   manager1   Shutdown        Rejected 2 minutes ago   "assigned node no longer meets…"   
+ekjo5vcda9ia    \_ quickpoll_db.1   postgres:17-alpine   worker2    Shutdown        Rejected 7 minutes ago   "assigned node no longer meets…"   
+k95g37wxo3ej    \_ quickpoll_db.1   postgres:17-alpine   manager1   Shutdown        Rejected 7 minutes ago   "assigned node no longer meets…"   
+### docker service ls
+ID             NAME               MODE         REPLICAS               IMAGE                                PORTS
+mnanf5fuuaxb   quickpoll_api      replicated   4/3 (max 2 per node)   127.0.0.1:5000/quickpoll-api:1.0     
+8gxdt2bpw5u1   quickpoll_backup   replicated   1/1                    postgres:17-alpine                   
+jtmoizcauf8d   quickpoll_db       replicated   1/1                    postgres:17-alpine                   
+u7ueq4t8q0dl   quickpoll_front    replicated   3/2                    127.0.0.1:5000/quickpoll-front:1.0   *:8080->80/tcp
+### curl /api/info
+{"version":"1.0","host":"4af11ed13818","time":"2026-11-04T15:04:19.600Z","db":"down","db_error":"getaddrinfo ENOTFOUND db"} [200]
+### curl /api/poll
+{"error":"getaddrinfo ENOTFOUND db"} [503]
+### curl / (front)
+[200]
+### logs backup
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+pg_dump: error: could not translate host name "db" to address: Name has no usable address
+15:02:44 saved /backups/quickpoll-20261104-150244.dump (4.0K)
+15:03:43 backup FAILED
+
+### 15:04:27 REPRISE : étiquette db sur worker1 (retirée de worker2)
+worker2
+worker1
+### 15:04:45 base Running (saine) sur worker1
+### 15:04:45 restauration de la dernière sauvegarde
+manager1 Complete less than a second ago 
+restoring /backups/quickpoll-20261104-150244.dump
+restore OK
+### 15:04:48 restauration terminée
+{"version":"1.0","total":51,"results":[{"option":"kubernetes","count":6},{"option":"nomad","count":5},{"option":"swarm","count":40}]}
