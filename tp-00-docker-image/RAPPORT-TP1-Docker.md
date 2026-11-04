@@ -331,7 +331,7 @@ Le fichier de config de nginx a bien été copié sur mon PC.
 
 ## 6. Création de mon image
 
-Fichiers dans le dossier `tp-docker-image/` :
+Fichiers dans le dossier `tp-00-docker-image/` :
 
 [index.html](index.html)
 

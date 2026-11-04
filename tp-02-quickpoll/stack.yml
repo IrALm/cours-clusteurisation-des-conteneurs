@@ -2,11 +2,11 @@
 #
 # Prérequis :
 #   docker node update --label-add db=true <noeud_db>
-#   printf '%s' '<mot_de_passe>' | docker secret create quickpoll_db_password -
+#   head -c 24 /dev/urandom | base64 | docker secret create quickpoll_db_password -
 # Déploiement :
 #   API_TAG=v1 docker stack deploy -c stack.yml quickpoll
 
-x-db-env: &db-env
+x-backend-env: &backend-env
   DB_HOST: postgres
   DB_USER: quickpoll
   DB_NAME: quickpoll
@@ -31,7 +31,7 @@ services:
 
   api:
     image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-api:${API_TAG:-v1}
-    environment: *db-env
+    environment: *backend-env
     secrets:
       - source: quickpoll_db_password
         target: db_password
@@ -67,7 +67,7 @@ services:
 
   worker:
     image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-worker:${WORKER_TAG:-v1}
-    environment: *db-env
+    environment: *backend-env
     secrets:
       - source: quickpoll_db_password
         target: db_password
@@ -114,7 +114,7 @@ networks:
     driver: overlay
   backend:
     driver: overlay
-    internal: true          # aucun accès sortant, pas joignable depuis front
+    internal: true          # pas de sortie vers l'extérieur ; front n'y est pas attaché
 
 volumes:
   pgdata:

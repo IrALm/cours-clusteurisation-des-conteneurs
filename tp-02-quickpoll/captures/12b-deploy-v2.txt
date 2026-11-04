@@ -1,0 +1,29 @@
+Updating service quickpoll_worker (id: y92pzz4mzolyf4iusfhc0h0hv)
+Updating service quickpoll_redis (id: k16y6xieqwa0esy49baflslw4)
+Updating service quickpoll_postgres (id: o2d2nz1xy0j8q5kq84mnxht1t)
+Updating service quickpoll_front (id: ulhs537k9yw73j3sezd6h5wfw)
+Updating service quickpoll_api (id: xt0yok1j16sptcqo00fvoom8i)
+overall progress: 0 out of 1 tasks
+1/1:  
+overall progress: 1 out of 1 tasks
+verify: Service y92pzz4mzolyf4iusfhc0h0hv converged
+overall progress: 0 out of 1 tasks
+1/1:  
+overall progress: 1 out of 1 tasks
+verify: Service k16y6xieqwa0esy49baflslw4 converged
+overall progress: 0 out of 1 tasks
+1/1:  
+overall progress: 1 out of 1 tasks
+verify: Service o2d2nz1xy0j8q5kq84mnxht1t converged
+overall progress: 0 out of 2 tasks
+1/2:  
+2/2:  
+overall progress: 2 out of 2 tasks
+verify: Service ulhs537k9yw73j3sezd6h5wfw converged
+overall progress: 0 out of 3 tasks
+1/3:  
+2/3:  
+3/3:  
+overall progress: 2 out of 3 tasks
+overall progress: 3 out of 3 tasks
+verify: Service xt0yok1j16sptcqo00fvoom8i converged

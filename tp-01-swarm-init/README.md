@@ -17,7 +17,7 @@ Fichiers rendus :
 
 ## 1. Topologie du cluster
 
-Je n'avais pas 3 machines à disposition, j'ai donc utilisé la méthode **DinD (Docker-in-Docker)**. Chaque nœud du cluster est un conteneur `docker:dind` qui fait tourner son propre moteur Docker. Les 3 conteneurs sont lancés sur mon PC (Docker Desktop) et reliés par un réseau Docker dédié, `swarm-net`. Pour Swarm, ce sont 3 machines différentes avec chacune son adresse IP.
+Je n'avais pas 3 machines à disposition, j'ai donc utilisé Docker-in-Docker (DinD). Chaque nœud du cluster est un conteneur `docker:dind` qui fait tourner son propre moteur Docker. Les 3 conteneurs sont lancés sur mon PC (Docker Desktop) et reliés par un réseau Docker dédié, `swarm-net`. Pour Swarm, ce sont 3 machines différentes avec chacune son adresse IP.
 
 | Nœud | Rôle | Adresse IP | OS | Docker Engine |
 |---|---|---|---|---|
@@ -140,7 +140,7 @@ Par défaut, un manager est aussi un nœud de travail : il a donc reçu une tâc
 
 ## 5. Simulation de la panne
 
-J'ai choisi d'arrêter **worker1**, puisque c'est lui qui portait 2 des 4 réplicas.
+J'ai choisi d'arrêter worker1, puisque c'est lui qui portait 2 des 4 réplicas.
 
 Pour simuler la panne, j'ai arrêté le conteneur qui joue le rôle de la machine :
 
@@ -162,16 +162,9 @@ ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS
 pj07363c4mno1ciweisizv933 *   manager    Ready     Active         Leader           29.8.2
 h0m8dk1epnyx0x039tdoxkf9b     worker1    Down      Active                          29.8.2
 qs7nm0to33s1istwrsne0x21e     worker2    Ready     Active                          29.8.2
-
-$  docker exec manager docker service ps web --filter desired-state=running
-ID             NAME      IMAGE          NODE      DESIRED STATE   CURRENT STATE                ERROR     PORTS
-xpsbb05ngj6j   web.1     nginx:latest   worker2   Running         Running 23 seconds ago
-uae30boc5j29   web.2     nginx:latest   manager   Running         Running 23 seconds ago
-n1howl81rzsk   web.3     nginx:latest   worker2   Running         Running 59 seconds ago
-21c56l1f7ju8   web.4     nginx:latest   manager   Running         Running about a minute ago
 ```
 
-Historique complet ([service-ps.txt](service-ps.txt)) :
+Historique des tâches ([service-ps.txt](service-ps.txt)) :
 
 ```text
 $ docker exec manager docker service ps web
@@ -212,8 +205,8 @@ J'ai reconstitué la chronologie avec l'heure de ma commande `docker stop`, l'he
 | 10:05:06.8 | **+17,4 s** | les 2 nouvelles tâches sont `Running` : retour à 4 réplicas |
 
 Le service a donc été rétabli en **environ 17 secondes**. Ce temps se décompose en deux parties :
-- **environ 11 s pour détecter la panne.** Le manager ne sait pas qu'un nœud est mort : il le déduit quand le nœud arrête d'envoyer ses *heartbeats* (signaux réguliers « je suis vivant », toutes les 5 s par défaut). Après plusieurs heartbeats manqués, le nœud est déclaré `Down`.
-- **environ 5 s pour démarrer les nouveaux conteneurs.** L'image nginx était déjà présente sur worker2 et sur le manager, donc il n'y a pas eu de téléchargement. Sinon le délai aurait été plus long.
+- environ 11 s pour détecter la panne. Le manager ne sait pas qu'un nœud est mort : il le déduit quand le nœud arrête d'envoyer ses *heartbeats* (signaux réguliers « je suis vivant », toutes les 5 s par défaut). Après plusieurs heartbeats manqués, le nœud est déclaré `Down`.
+- environ 5 s pour démarrer les nouveaux conteneurs. L'image nginx était déjà présente sur worker2 et sur le manager, donc il n'y a pas eu de téléchargement. Sinon le délai aurait été plus long.
 
 Pendant ces 17 secondes, le service tournait avec seulement 2 réplicas sur 4. Il était dégradé mais toujours disponible, puisque `web.3` et `web.4` n'ont jamais été arrêtés.
 
@@ -244,7 +237,7 @@ web.3     worker2   Running about a minute ago
 web.4     manager   Running about a minute ago
 ```
 
-Worker1 repasse en `Ready`, mais **aucune tâche ne revient dessus** : 0 conteneur nginx sur worker1. Swarm ne rééquilibre pas automatiquement un service qui fonctionne déjà, pour ne pas couper des conteneurs sains sans raison. Pour répartir à nouveau les tâches, il faut le demander :
+Worker1 repasse en `Ready`, mais aucune tâche ne revient dessus : 0 conteneur nginx sur worker1. Swarm ne rééquilibre pas automatiquement un service qui fonctionne déjà, pour ne pas couper des conteneurs sains sans raison. Pour répartir à nouveau les tâches, il faut le demander :
 
 ```text
 $ docker service update --force web
@@ -277,18 +270,18 @@ $ docker service scale web=6
 web: Error response from daemon: This node is not a swarm manager. ...
 ```
 
-1. **Les conteneurs des workers continuent de tourner.** Les workers n'ont pas besoin du manager pour faire tourner ce qu'ils ont déjà, donc le service reste en partie disponible.
-2. **Les 2 réplicas qui étaient sur le manager sont perdus et ne sont pas recréés.** C'est justement le manager qui s'occupe de replanifier les tâches. Sans lui, personne ne le fait, et le service reste à 2 réplicas sur 4.
-3. **On ne peut plus du tout gérer le cluster.** Impossible de lister les nœuds, de créer, modifier ou scaler un service. Les workers refusent ces commandes.
+1. Les conteneurs des workers continuent de tourner. Les workers n'ont pas besoin du manager pour faire tourner ce qu'ils ont déjà, donc le service reste en partie disponible.
+2. Les 2 réplicas qui étaient sur le manager sont perdus et ne sont pas recréés. C'est justement le manager qui s'occupe de replanifier les tâches. Sans lui, personne ne le fait, et le service reste à 2 réplicas sur 4.
+3. On ne peut plus du tout gérer le cluster. Impossible de lister les nœuds, de créer, modifier ou scaler un service. Les workers refusent ces commandes.
 4. Si un worker tombait en plus à ce moment-là, ses tâches ne seraient pas replanifiées non plus.
 
 Après `docker start manager`, le cluster est revenu à la normale (`4/4`) : l'état du Swarm est enregistré sur le disque du manager, qui a relancé ses tâches au redémarrage. Si le disque du manager avait été perdu, le cluster aurait été perdu aussi. Il aurait fallu tout recréer (`swarm init`, nouveaux `join`, recréer les services) ou restaurer une sauvegarde de `/var/lib/docker/swarm`.
 
 ### Pourquoi, et comment l'éviter
 
-Avec un seul manager, le manager est un **point unique de défaillance**  pour la gestion du cluster.
+Avec un seul manager, le manager est un point unique de défaillance pour la gestion du cluster.
 
-En production, on met **plusieurs managers**, toujours en **nombre impair** (3 ou 5). Ils se mettent d'accord sur l'état du cluster avec l'algorithme **Raft**, qui demande une **majorité** (quorum) de managers disponibles :
+En production, on met plusieurs managers, toujours en nombre impair (3 ou 5). Ils se mettent d'accord sur l'état du cluster avec l'algorithme Raft, qui demande qu'une majorité (quorum) de managers soit disponible :
 
 | Nombre de managers | Majorité nécessaire | Pannes de managers tolérées |
 |---|---|---|
@@ -319,7 +312,7 @@ docker network rm swarm-net
 
 ## Ce que je retiens
 
-- Swarm compare en permanence l'**état désiré** (4 réplicas) à l'**état réel**, et corrige tout seul l'écart quand un nœud tombe.
+- Swarm compare en permanence l'état désiré (4 réplicas) à l'état réel, et corrige tout seul l'écart quand un nœud tombe.
 - La détection d'une panne n'est pas immédiate : elle repose sur les heartbeats, d'où une dizaine de secondes avant la réaction.
 - Swarm ne rééquilibre pas tout seul quand un nœud revient. Il faut un `docker service update --force`.
 - Les workers sont remplaçables, mais avec un seul manager le cluster ne se gère plus si ce manager tombe. Il en faut 3 (ou 5) pour être vraiment résilient.
