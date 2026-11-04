@@ -1,0 +1,17 @@
+ID                            HOSTNAME     STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+bwmi8j3r8kzohzen0li7z5ukp *   qp-manager   Ready     Active         Leader           29.8.2
+npnc0d3dky00i5lk0vfaj4f1u     qp-worker1   Ready     Active                          29.8.2
+kakdc9lds0ygwq02c841da2tb     qp-worker2   Ready     Active                          29.8.2
+
+== 30 s après réactivation, tâches sur qp-manager :
+(fin de liste)
+
+== Après 'docker service update --force quickpoll_api' (rééquilibrage manuel) :
+qp-worker1 quickpoll_api.2
+qp-worker1 quickpoll_api.3
+qp-worker1 quickpoll_front.1
+qp-worker1 quickpoll_postgres.1
+qp-worker2 quickpoll_api.1
+qp-worker2 quickpoll_front.2
+qp-worker2 quickpoll_redis.1
+qp-worker2 quickpoll_worker.1

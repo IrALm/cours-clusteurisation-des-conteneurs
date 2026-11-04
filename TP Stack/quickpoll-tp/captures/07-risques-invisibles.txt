@@ -1,0 +1,12 @@
+== Postgres joignable sur le port 5432 de N'IMPORTE QUEL noeud (routing mesh) :
+qp-worker1:5432 -> OUVERT
+qp-worker2:5432 -> OUVERT
+
+== Mot de passe visible dans la spec du service :
+["POSTGRES_DB=quickpoll","POSTGRES_PASSWORD=SuperSecret2026!","POSTGRES_USER=quickpoll"]
+
+== Volume pgdata : volume local, sur le seul noeud où tourne postgres :
+qp-manager: 
+qp-worker1: 
+qp-worker2: quickpoll_pgdata
+quickpoll_postgres.1 -> qp-worker2

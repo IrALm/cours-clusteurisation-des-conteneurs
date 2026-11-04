@@ -1,0 +1,9 @@
+$ docker service update --constraint-add node.role==manager --mount-add type=volume,source=registry-data,target=/var/lib/registry registry
+constraints=[node.role==manager] mounts=registry-data:/var/lib/registry
+registry.1 -> qp-manager Running 5 seconds ago
+{"repositories":["quickpoll-api","quickpoll-front","quickpoll-worker"]}
+$ API_TAG=v2 docker stack deploy -c stack.yml quickpoll
+verify: Service o2d2nz1xy0j8q5kq84mnxht1t converged
+verify: Service ulhs537k9yw73j3sezd6h5wfw converged
+verify: Service xt0yok1j16sptcqo00fvoom8i converged
+verify: Service k16y6xieqwa0esy49baflslw4 converged

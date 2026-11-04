@@ -1,0 +1,18 @@
+>> 127.0.0.1:5000/quickpoll-front:v1
+sha256:9170b66f9d208cf944a234e86617943d2949bdb452dbbfd287a27caeb130f8a0
+127.0.0.1:5000/quickpoll-front:v1
+>> 127.0.0.1:5000/quickpoll-worker:v1
+sha256:4ccad41b884a50b5221ae6059af05eb7514289da593b9f593083d7145e8050cb
+127.0.0.1:5000/quickpoll-worker:v1
+>> 127.0.0.1:5000/quickpoll-api:v1
+sha256:417c3d298c1ac24847ee467fd4171467274e047abbe97b6c03783a0032af2be5
+127.0.0.1:5000/quickpoll-api:v1
+>> 127.0.0.1:5000/quickpoll-api:v2
+sha256:211bc0d1898a837a6eacdd0ebb3ff2deecda353eab8cc08d0e0901876366c5c4
+127.0.0.1:5000/quickpoll-api:v2
+>> 127.0.0.1:5000/quickpoll-api:v3
+sha256:f45fd1ebddbea42041407453af68b1551e1cc547f1daca21783fac9e3f513411
+127.0.0.1:5000/quickpoll-api:v3
+
+Images disponibles :
+{"repositories":["quickpoll-api","quickpoll-front","quickpoll-worker"]}

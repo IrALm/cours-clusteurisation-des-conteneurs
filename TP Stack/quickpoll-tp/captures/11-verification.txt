@@ -1,0 +1,22 @@
+== Page d'accueil :
+<title>QuickPoll</title>
+== Votes :
+{"queued":"c8473870-85ed-4835-a41b-5078893a1a05"}
+{"queued":"49b0a96a-7e15-46a7-8fc0-e86c51879bd5"}
+{"queued":"f5135d87-bf74-4aa4-b98f-5dd5e82abaa1"}
+{"queued":"dc533730-75e7-425a-b9cf-0a129e56d24b"}
+{"queued":"a456729a-b4a9-4a85-9c1e-862098575d80"}
+== Résultats :
+{"version":"v1","results":[{"option":"kubernetes","count":1},{"option":"nomad","count":1},{"option":"swarm","count":3}]}
+
+== Santé des tâches API :
+qp-manager quickpoll_api.3.pw1gyg884m5e5d4b3ham3tye6 Up About a minute (healthy)
+qp-worker1 quickpoll_api.1.p8oz9lv872hlh70g6saabvkib Up About a minute (healthy)
+qp-worker2 quickpoll_api.2.wgsbz3ibrjmpmivswqrsap5aa Up About a minute (healthy)
+
+
+== Postgres plus publié :
+5432 fermé
+
+== Plus de mot de passe en clair dans la spec :
+["POSTGRES_DB=quickpoll","POSTGRES_PASSWORD_FILE=/run/secrets/db_password","POSTGRES_USER=quickpoll"]

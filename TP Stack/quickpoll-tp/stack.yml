@@ -1,0 +1,124 @@
+# QuickPoll — stack de production (Docker Swarm)
+#
+# Prérequis :
+#   docker node update --label-add db=true <noeud_db>
+#   printf '%s' '<mot_de_passe>' | docker secret create quickpoll_db_password -
+# Déploiement :
+#   API_TAG=v1 docker stack deploy -c stack.yml quickpoll
+
+x-db-env: &db-env
+  DB_HOST: postgres
+  DB_USER: quickpoll
+  DB_NAME: quickpoll
+  DB_PASSWORD_FILE: /run/secrets/db_password
+  REDIS_URL: redis://redis:6379
+
+services:
+  front:
+    image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-front:${FRONT_TAG:-v1}
+    ports:
+      - "8080:80"
+    networks:
+      - frontend            # front ne voit QUE l'API
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+
+  api:
+    image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-api:${API_TAG:-v1}
+    environment: *db-env
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      # pas de curl dans l'image, mais node 22 a fetch() natif
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any      # tolère un Postgres pas encore prêt : Swarm relance la tâche
+        delay: 5s
+        window: 30s
+      update_config:
+        parallelism: 1      # un réplica à la fois
+        delay: 5s
+        order: start-first  # le nouveau démarre avant l'arrêt de l'ancien
+        failure_action: rollback
+        monitor: 30s        # > start_period + interval * retries
+        max_failure_ratio: 0
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
+        failure_action: pause
+        monitor: 30s
+
+  worker:
+    image: ${REGISTRY:-127.0.0.1:5000}/quickpoll-worker:${WORKER_TAG:-v1}
+    environment: *db-env
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - backend
+    deploy:
+      restart_policy:
+        condition: any
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: quickpoll
+      POSTGRES_DB: quickpoll
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+    # pas de "ports:" : Postgres n'est pas publié sur le routing mesh
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.db == true   # toujours le même nœud => toujours le même volume
+      restart_policy:
+        condition: any
+
+networks:
+  frontend:
+    driver: overlay
+  backend:
+    driver: overlay
+    internal: true          # aucun accès sortant, pas joignable depuis front
+
+volumes:
+  pgdata:
+
+secrets:
+  quickpoll_db_password:
+    external: true          # créé hors du dépôt avec "docker secret create"

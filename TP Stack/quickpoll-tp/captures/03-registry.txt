@@ -1,0 +1,8 @@
+ID             NAME         IMAGE        NODE         DESIRED STATE   CURRENT STATE           ERROR     PORTS
+gm7ei3kinvnu   registry.1   registry:2   qp-manager   Running         Running 5 seconds ago             
+== qp-worker1
+{"repositories":["quickpoll-api","quickpoll-front","quickpoll-worker"]}
+{"name":"quickpoll-api","tags":["v2","v3","v1"]}
+== qp-worker2
+{"repositories":["quickpoll-api","quickpoll-front","quickpoll-worker"]}
+{"name":"quickpoll-api","tags":["v2","v3","v1"]}

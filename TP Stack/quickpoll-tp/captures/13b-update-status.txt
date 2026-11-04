@@ -1,0 +1,12 @@
+09:11:49 updating
+09:11:54 updating
+09:12:00 updating
+09:12:05 updating
+09:12:10 rollback_started
+09:12:16 rollback_started
+09:12:21 rollback_started
+09:12:26 rollback_started
+09:12:32 rollback_started
+09:12:37 rollback_started
+09:12:42 rollback_started
+09:12:48 rollback_completed

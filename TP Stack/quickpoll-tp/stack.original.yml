@@ -1,0 +1,71 @@
+# QuickPoll — stack de production
+# "Ça marchait sur mon poste avec docker compose up." — l'ancien dev
+
+services:
+  front:
+    build: ./app/front
+    image: quickpoll-front:v1
+    ports:
+      - "8080:80"
+    networks:
+      - quickpoll
+    depends_on:
+      - api
+
+  api:
+    build: ./app/api
+    image: quickpoll-api:v1
+    environment:
+      DB_HOST: postgres
+      DB_USER: quickpoll
+      DB_NAME: quickpoll
+      DB_PASSWORD: SuperSecret2026!
+      REDIS_URL: redis://redis:6379
+    networks:
+      - quickpoll
+    depends_on:
+      - postgres
+      - redis
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+
+  worker:
+    build: ./app/worker
+    image: quickpoll-worker:v1
+    environment:
+      DB_HOST: postgres
+      DB_USER: quickpoll
+      DB_NAME: quickpoll
+      DB_PASSWORD: SuperSecret2026!
+      REDIS_URL: redis://redis:6379
+    networks:
+      - quickpoll
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - quickpoll
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: quickpoll
+      POSTGRES_DB: quickpoll
+      POSTGRES_PASSWORD: SuperSecret2026!
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - quickpoll
+
+networks:
+  quickpoll:
+
+volumes:
+  pgdata:

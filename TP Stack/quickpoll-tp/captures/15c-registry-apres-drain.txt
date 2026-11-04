@@ -1,0 +1,9 @@
+== Catalogue du registry après sa migration sur qp-worker2 :
+{"repositories":[]}
+
+== Image worker présente en cache sur qp-worker2 ?
+127.0.0.1:5000/quickpoll-api:v2
+127.0.0.1:5000/quickpoll-api:v3
+127.0.0.1:5000/quickpoll-api:v1
+127.0.0.1:5000/quickpoll-worker:v1
+127.0.0.1:5000/quickpoll-front:v1

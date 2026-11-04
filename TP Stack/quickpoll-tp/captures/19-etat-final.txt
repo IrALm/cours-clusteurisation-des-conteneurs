@@ -1,0 +1,28 @@
+ID                            HOSTNAME     STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+bwmi8j3r8kzohzen0li7z5ukp *   qp-manager   Ready     Active         Leader           29.8.2
+npnc0d3dky00i5lk0vfaj4f1u     qp-worker1   Ready     Active                          29.8.2
+kakdc9lds0ygwq02c841da2tb     qp-worker2   Ready     Active                          29.8.2
+
+ID             NAME                 MODE         REPLICAS   IMAGE                                PORTS
+xt0yok1j16sp   quickpoll_api        replicated   3/3        127.0.0.1:5000/quickpoll-api:v2      
+ulhs537k9yw7   quickpoll_front      replicated   2/2        127.0.0.1:5000/quickpoll-front:v1    *:8080->80/tcp
+o2d2nz1xy0j8   quickpoll_postgres   replicated   1/1        postgres:16-alpine                   
+k16y6xieqwa0   quickpoll_redis      replicated   1/1        redis:7-alpine                       
+y92pzz4mzoly   quickpoll_worker     replicated   1/1        127.0.0.1:5000/quickpoll-worker:v1   
+
+NAME                   IMAGE                                NODE         CURRENT STATE
+quickpoll_api.1        127.0.0.1:5000/quickpoll-api:v2      qp-worker2   Running 56 seconds ago
+quickpoll_api.2        127.0.0.1:5000/quickpoll-api:v2      qp-worker1   Running 56 seconds ago
+quickpoll_api.3        127.0.0.1:5000/quickpoll-api:v2      qp-manager   Running 47 seconds ago
+quickpoll_front.1      127.0.0.1:5000/quickpoll-front:v1    qp-worker2   Running 2 minutes ago
+quickpoll_front.2      127.0.0.1:5000/quickpoll-front:v1    qp-manager   Running 2 minutes ago
+quickpoll_postgres.1   postgres:16-alpine                   qp-worker1   Running about a minute ago
+quickpoll_redis.1      redis:7-alpine                       qp-worker2   Running 10 minutes ago
+quickpoll_worker.1     127.0.0.1:5000/quickpoll-worker:v1   qp-manager   Running 2 minutes ago
+
+qp-manager quickpoll_api.3.1snga5v3cew03vmklxxgbj5jl Up 53 seconds (healthy)
+qp-worker1 quickpoll_api.2.yp3fccoh0057fwu60ssmohvef Up About a minute (healthy)
+qp-worker2 quickpoll_api.1.oje37v8ab3j09cpfrnvu8ngel Up About a minute (healthy)
+
+{"version":"v2","host":"6d410379084b"}
+{"version":"v2","results":[{"option":"kubernetes","count":5},{"option":"nomad","count":4},{"option":"swarm","count":6}]}

@@ -1,0 +1,10 @@
+{
+  "name": "quickpoll-worker",
+  "version": "1.0.0",
+  "private": true,
+  "main": "worker.js",
+  "dependencies": {
+    "pg": "^8.13.0",
+    "redis": "^4.7.0"
+  }
+}

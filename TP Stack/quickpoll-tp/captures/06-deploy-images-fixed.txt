@@ -1,0 +1,11 @@
+ID             NAME                 MODE         REPLICAS   IMAGE                                PORTS
+wpipf7zf6la9   quickpoll_api        replicated   0/1        127.0.0.1:5000/quickpoll-api:v1      
+6kplo33gvw9f   quickpoll_front      replicated   1/1        127.0.0.1:5000/quickpoll-front:v1    *:8080->80/tcp
+4jhibs7jev6o   quickpoll_postgres   replicated   1/1        postgres:16-alpine                   *:5432->5432/tcp
+o0b7mo7ngfqu   quickpoll_redis      replicated   1/1        redis:7-alpine                       
+7f5zx5232v7g   quickpoll_worker     replicated   1/1        127.0.0.1:5000/quickpoll-worker:v1   
+
+NAME              NODE         DESIRED STATE   CURRENT STATE           ERROR
+quickpoll_api.1   qp-manager   Shutdown        Failed 39 seconds ago   "task: non-zero exit (1)"
+
+init failed: getaddrinfo ENOTFOUND postgres

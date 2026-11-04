@@ -1,0 +1,5 @@
+ID                            HOSTNAME     STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+bwmi8j3r8kzohzen0li7z5ukp *   qp-manager   Ready     Active         Leader           29.8.2
+npnc0d3dky00i5lk0vfaj4f1u     qp-worker1   Ready     Active                          29.8.2
+kakdc9lds0ygwq02c841da2tb     qp-worker2   Ready     Active                          29.8.2
+map[db:true]

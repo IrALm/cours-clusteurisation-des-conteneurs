@@ -1,0 +1,7 @@
+== Depuis un conteneur front (réseau frontend uniquement) :
+api:3000       joignable
+postgres:5432  nom inconnu -> ISOLÉ
+redis:6379     nom inconnu -> ISOLÉ
+== Depuis un conteneur api (frontend + backend) :
+postgres:5432  joignable
+redis:6379     joignable

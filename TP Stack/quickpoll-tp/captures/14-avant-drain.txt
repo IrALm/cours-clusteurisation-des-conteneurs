@@ -1,0 +1,12 @@
+== Résultats avant drain :
+{"version":"v2","results":[{"option":"kubernetes","count":5},{"option":"nomad","count":4},{"option":"swarm","count":6}]}
+
+== Répartition des tâches par nœud :
+qp-manager quickpoll_api.1
+qp-manager quickpoll_api.2
+qp-manager quickpoll_worker.1
+qp-worker1 quickpoll_api.3
+qp-worker1 quickpoll_front.1
+qp-worker1 quickpoll_postgres.1
+qp-worker2 quickpoll_front.2
+qp-worker2 quickpoll_redis.1

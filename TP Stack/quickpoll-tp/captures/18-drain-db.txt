@@ -1,0 +1,21 @@
+$ docker node update --availability drain qp-worker1   # noeud db=true
+NAME                       NODE         DESIRED STATE   CURRENT STATE             ERROR
+quickpoll_postgres.1                    Running         Pending 25 seconds ago    "no suitable node (scheduling constraints not satisfied on 2 nodes; 1 node not available for new tasks)"
+ \_ quickpoll_postgres.1   qp-worker1   Shutdown        Shutdown 21 seconds ago   
+
+== /api/results pendant que postgres est Pending :
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.27.5</center>
+</body>
+</html>
+
+
+$ docker node update --availability active qp-worker1
+NAME                       NODE         CURRENT STATE
+quickpoll_postgres.1       qp-worker1   Running 39 seconds ago
+
+== /api/results après retour du noeud (même volume => votes conservés) :
+{"version":"v2","results":[{"option":"kubernetes","count":5},{"option":"nomad","count":4},{"option":"swarm","count":6}]}

@@ -1,0 +1,26 @@
+Since --detach=false was not specified, tasks will be created in the background.
+In a future release, --detach=false will become the default.
+Creating network quickpoll_frontend
+Creating network quickpoll_backend
+Creating service quickpoll_postgres
+Creating service quickpoll_front
+Creating service quickpoll_api
+Creating service quickpoll_worker
+Creating service quickpoll_redis
+ID             NAME                 MODE         REPLICAS   IMAGE                                PORTS
+xt0yok1j16sp   quickpoll_api        replicated   3/3        127.0.0.1:5000/quickpoll-api:v1      
+ulhs537k9yw7   quickpoll_front      replicated   2/2        127.0.0.1:5000/quickpoll-front:v1    *:8080->80/tcp
+o2d2nz1xy0j8   quickpoll_postgres   replicated   1/1        postgres:16-alpine                   
+k16y6xieqwa0   quickpoll_redis      replicated   1/1        redis:7-alpine                       
+y92pzz4mzoly   quickpoll_worker     replicated   1/1        127.0.0.1:5000/quickpoll-worker:v1   
+
+NAME                     NODE         CURRENT STATE            ERROR
+quickpoll_api.1          qp-worker1   Running 38 seconds ago   
+quickpoll_api.2          qp-worker2   Running 45 seconds ago   
+quickpoll_api.3          qp-manager   Running 39 seconds ago   
+quickpoll_front.1        qp-worker1   Running 58 seconds ago   
+quickpoll_front.2        qp-worker2   Running 57 seconds ago   
+quickpoll_postgres.1     qp-worker1   Running 51 seconds ago   
+quickpoll_redis.1        qp-worker2   Running 58 seconds ago   
+quickpoll_worker.1       qp-manager   Running 53 seconds ago   
+ \_ quickpoll_worker.1   qp-manager   Failed 59 seconds ago    "task: non-zero exit (1)"

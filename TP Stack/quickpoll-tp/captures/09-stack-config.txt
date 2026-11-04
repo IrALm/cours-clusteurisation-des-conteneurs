@@ -1,0 +1,126 @@
+version: "3.13"
+services:
+  api:
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: rollback
+        monitor: 30s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: pause
+        monitor: 30s
+        order: start-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 30s
+    environment:
+      DB_HOST: postgres
+      DB_NAME: quickpoll
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_USER: quickpoll
+      REDIS_URL: redis://redis:6379
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      timeout: 3s
+      interval: 5s
+      retries: 3
+      start_period: 10s
+    image: 127.0.0.1:5000/quickpoll-api:v1
+    networks:
+      backend: null
+      frontend: null
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+  front:
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: any
+    image: 127.0.0.1:5000/quickpoll-front:v1
+    networks:
+      frontend: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8080
+        protocol: tcp
+  postgres:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.db == true
+    environment:
+      POSTGRES_DB: quickpoll
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER: quickpoll
+    image: postgres:16-alpine
+    networks:
+      backend: null
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+  redis:
+    deploy:
+      restart_policy:
+        condition: any
+    image: redis:7-alpine
+    networks:
+      backend: null
+  worker:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+    environment:
+      DB_HOST: postgres
+      DB_NAME: quickpoll
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_USER: quickpoll
+      REDIS_URL: redis://redis:6379
+    image: 127.0.0.1:5000/quickpoll-worker:v1
+    networks:
+      backend: null
+    secrets:
+      - source: quickpoll_db_password
+        target: db_password
+networks:
+  backend:
+    driver: overlay
+    internal: true
+  frontend:
+    driver: overlay
+volumes:
+  pgdata: {}
+secrets:
+  quickpoll_db_password:
+    name: quickpoll_db_password
+    external: true
+x-db-env:
+  DB_HOST: postgres
+  DB_NAME: quickpoll
+  DB_PASSWORD_FILE: /run/secrets/db_password
+  DB_USER: quickpoll
+  REDIS_URL: redis://redis:6379

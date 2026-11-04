@@ -1,0 +1,31 @@
+Ignoring unsupported options: build
+
+Since --detach=false was not specified, tasks will be created in the background.
+In a future release, --detach=false will become the default.
+Creating network quickpoll_quickpoll
+Creating service quickpoll_worker
+Creating service quickpoll_redis
+Creating service quickpoll_postgres
+Creating service quickpoll_front
+Creating service quickpoll_api
+ID             NAME                 MODE         REPLICAS   IMAGE                 PORTS
+oerhkjru4wm6   quickpoll_api        replicated   0/1        quickpoll-api:v1      
+0vshw1z8w1cm   quickpoll_front      replicated   0/1        quickpoll-front:v1    *:8080->80/tcp
+1jrjsjzthx7p   quickpoll_postgres   replicated   1/1        postgres:16-alpine    *:5432->5432/tcp
+wjteacwppuyb   quickpoll_redis      replicated   1/1        redis:7-alpine        
+jxd7mm7p6073   quickpoll_worker     replicated   0/1        quickpoll-worker:v1   
+
+NAME                     IMAGE                                                                                        NODE         CURRENT STATE                      ERROR
+quickpoll_api.1          quickpoll-api:v1                                                                             qp-worker2   Rejected 44 seconds ago            "pull access denied for quickpoll-api, repository does not exist or may require 'docker login'"
+quickpoll_front.1        quickpoll-front:v1                                                                           qp-manager   Preparing less than a second ago   
+ \_ quickpoll_front.1    quickpoll-front:v1                                                                           qp-worker2   Rejected 4 seconds ago             "pull access denied for quickpoll-front, repository does not exist or may require 'docker login'"
+ \_ quickpoll_front.1    quickpoll-front:v1                                                                           qp-worker2   Rejected 9 seconds ago             "pull access denied for quickpoll-front, repository does not exist or may require 'docker login'"
+ \_ quickpoll_front.1    quickpoll-front:v1                                                                           qp-worker2   Rejected 14 seconds ago            "pull access denied for quickpoll-front, repository does not exist or may require 'docker login'"
+ \_ quickpoll_front.1    quickpoll-front:v1                                                                           qp-worker2   Rejected 19 seconds ago            "pull access denied for quickpoll-front, repository does not exist or may require 'docker login'"
+quickpoll_postgres.1     postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea   qp-manager   Running 37 seconds ago             
+quickpoll_redis.1        redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499       qp-worker2   Running 43 seconds ago             
+quickpoll_worker.1       quickpoll-worker:v1                                                                          qp-manager   Rejected 2 seconds ago             "pull access denied for quickpoll-worker, repository does not exist or may require 'docker login'"
+ \_ quickpoll_worker.1   quickpoll-worker:v1                                                                          qp-worker2   Rejected 7 seconds ago             "pull access denied for quickpoll-worker, repository does not exist or may require 'docker login'"
+ \_ quickpoll_worker.1   quickpoll-worker:v1                                                                          qp-worker2   Rejected 12 seconds ago            "pull access denied for quickpoll-worker, repository does not exist or may require 'docker login'"
+ \_ quickpoll_worker.1   quickpoll-worker:v1                                                                          qp-worker2   Rejected 17 seconds ago            "pull access denied for quickpoll-worker, repository does not exist or may require 'docker login'"
+ \_ quickpoll_worker.1   quickpoll-worker:v1                                                                          qp-worker2   Rejected 22 seconds ago            "pull access denied for quickpoll-worker, repository does not exist or may require 'docker login'"

@@ -1,0 +1,15 @@
+== UpdateStatus :
+{"State":"rollback_completed","StartedAt":"2026-10-07T07:11:47.303376461Z","CompletedAt":"2026-10-07T07:12:45.654421949Z","Message":"rollback completed"}
+
+== Image courante :
+127.0.0.1:5000/quickpoll-api:v2@sha256:343279b29ccf19a3a1f9ee610925067ded70710fe41611ed2fbcb19f02ca11e2
+
+NAME                  IMAGE                             NODE         DESIRED STATE   CURRENT STATE                 ERROR
+quickpoll_api.1       127.0.0.1:5000/quickpoll-api:v2   qp-manager   Running         Running 2 minutes ago         
+ \_ quickpoll_api.1   127.0.0.1:5000/quickpoll-api:v1   qp-worker1   Shutdown        Shutdown 2 minutes ago        
+quickpoll_api.2       127.0.0.1:5000/quickpoll-api:v2   qp-worker2   Shutdown        Shutdown 39 seconds ago       
+ \_ quickpoll_api.2   127.0.0.1:5000/quickpoll-api:v3   qp-worker2   Shutdown        Complete 41 seconds ago       
+ \_ quickpoll_api.2   127.0.0.1:5000/quickpoll-api:v2   qp-manager   Running         Running about a minute ago    
+ \_ quickpoll_api.2   127.0.0.1:5000/quickpoll-api:v1   qp-worker2   Shutdown        Shutdown about a minute ago   
+quickpoll_api.3       127.0.0.1:5000/quickpoll-api:v2   qp-worker1   Running         Running 2 minutes ago         
+ \_ quickpoll_api.3   127.0.0.1:5000/quickpoll-api:v1   qp-manager   Shutdown        Shutdown 2 minutes ago        
